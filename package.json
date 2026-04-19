@@ -14,8 +14,8 @@
     "structured data"
   ],
   "license": "MIT",
-  "repository": "git@github.com:jessym/react-seo-tools.git",
-  "author": "Jessy <jessym@moysus.com> (https://www.jessym.com)",
+  "repository": "git@github.com:butterhosting/react-seo-tools.git",
+  "author": "Jessy <contact@butterhost.ing>",
   "engines": {
     "node": ">= 24.0.0",
     "npm": ">= 11.0.0"
