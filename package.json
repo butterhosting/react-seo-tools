@@ -1,6 +1,6 @@
 {
   "name": "react-seo-tools",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -15,42 +15,32 @@
   ],
   "license": "MIT",
   "repository": "git@github.com:jessym/react-seo-tools.git",
-  "author": "Jessy <jessym@jessym.com> (https://www.jessym.com)",
+  "author": "Jessy <jessym@moysus.com> (https://www.jessym.com)",
   "engines": {
-    "node": ">= 18.4.0",
-    "npm": ">= 8.12.1"
+    "node": ">= 24.0.0",
+    "npm": ">= 11.0.0"
   },
   "scripts": {
+    "tc": "tsc --noEmit",
     "test": "jest",
     "testw": "jest --watch",
-    "build": "webpack --mode production",
-    "upgrade:list": "npx npm-check-updates",
-    "upgrade:execute": "npx npm-check-updates -u"
+    "build": "rm -rf lib && tsc -p tsconfig.build.json"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@types/jest": "^28.1.1",
-    "@types/jstoxml": "^2.0.2",
-    "@types/react": "^18.0.13",
-    "@types/react-dom": "^18.0.5",
-    "jest": "^28.1.1",
-    "jest-environment-jsdom": "^28.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "remove-files-webpack-plugin": "^1.5.0",
-    "ts-jest": "^28.0.5",
-    "ts-loader": "^9.3.0",
-    "ts-node": "^10.8.1",
-    "typescript": "^4.7.3",
-    "webpack": "^5.73.0",
-    "webpack-cli": "^4.10.0"
-  },
-  "dependencies": {
-    "jstoxml": "^3.2.3"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "ts-jest": "^29.4.9",
+    "typescript": "^6.0.3"
   }
 }

@@ -18,21 +18,21 @@ export function generateRobotsTxt(options: RobotsTxtOptions): string {
   const blocks: string[] = [];
 
   toArray(options.policy).forEach((policy) => {
-    let policyBlock = '';
+    let policyBlock = "";
     toArray(policy.userAgent).forEach((ua) => (policyBlock += `User-agent: ${ua}\n`));
     toArray(policy.allow).forEach((a) => (policyBlock += `Allow: ${a}\n`));
     toArray(policy.disallow).forEach((d) => (policyBlock += `Disallow: ${d}\n`));
     blocks.push(policyBlock);
   });
 
-  let sitemapBlock = '';
+  let sitemapBlock = "";
   toArray(options.sitemap).forEach((s) => (sitemapBlock += `Sitemap: ${s}\n`));
   blocks.push(sitemapBlock);
 
   return blocks
     .map((block) => block.trim())
     .filter(Boolean)
-    .join('\n\n');
+    .join("\n\n");
 }
 
 function toArray<T>(argument?: T | T[]): T[] {

@@ -1,7 +1,7 @@
-import { Changefreq, generateSitemapXml } from './generateSitemapXml';
+import { Changefreq, generateSitemapXml } from "./generateSitemapXml";
 
 describe(generateSitemapXml, () => {
-  it('generates an empty file if no options were specified', () => {
+  it("generates an empty file if no options were specified", () => {
     // When
     const xml = generateSitemapXml({});
 
@@ -12,22 +12,22 @@ describe(generateSitemapXml, () => {
     expect(xml).toEqual(expected.trim());
   });
 
-  it('throws an error when trying to generate both a url set and a sitemap index', () => {
+  it("throws an error when trying to generate both a url set and a sitemap index", () => {
     // When
     const action = () => generateSitemapXml({ urlSet: [], sitemapIndex: [] });
 
     // Then
-    expect(action).toThrowError(`Either a 'urlset' or a 'sitemapindex' can be generated, but not both`);
+    expect(action).toThrow(`Either a 'urlset' or a 'sitemapindex' can be generated, but not both`);
   });
 
-  it('generates a url set', () => {
+  it("generates a url set", () => {
     // When
     const xml = generateSitemapXml({
       urlSet: [
-        { loc: '/' },
-        { loc: '/articles', lastmod: '2020-12-31' },
-        { loc: '/articles/123', lastmod: '2020-12-31', changefreq: Changefreq.daily },
-        { loc: '/articles/123/comments', lastmod: '2020-12-31', changefreq: Changefreq.daily, priority: 0.2 },
+        { loc: "/" },
+        { loc: "/articles", lastmod: "2020-12-31" },
+        { loc: "/articles/123", lastmod: "2020-12-31", changefreq: Changefreq.daily },
+        { loc: "/articles/123/comments", lastmod: "2020-12-31", changefreq: Changefreq.daily, priority: 0.2 },
       ],
       pretty: true,
     });
@@ -59,10 +59,10 @@ describe(generateSitemapXml, () => {
     expect(xml).toEqual(expected.trim());
   });
 
-  it('generates a sitemap index', () => {
+  it("generates a sitemap index", () => {
     // When
     const xml = generateSitemapXml({
-      sitemapIndex: [{ loc: '/sitemaps/website.xml' }, { loc: '/sitemaps/marketing.xml', lastmod: '2020-12-31' }],
+      sitemapIndex: [{ loc: "/sitemaps/website.xml" }, { loc: "/sitemaps/marketing.xml", lastmod: "2020-12-31" }],
       pretty: true,
     });
 
@@ -82,11 +82,11 @@ describe(generateSitemapXml, () => {
     expect(xml).toEqual(expected.trim());
   });
 
-  it('prefixes url set locations with a hostname', () => {
+  it("prefixes url set locations with a hostname", () => {
     // When
     const xml = generateSitemapXml({
-      hostname: 'http://localhost:8080',
-      urlSet: [{ loc: '' }, { loc: '/about-us' }],
+      hostname: "http://localhost:8080",
+      urlSet: [{ loc: "" }, { loc: "/about-us" }],
       pretty: true,
     });
 
@@ -105,11 +105,11 @@ describe(generateSitemapXml, () => {
     expect(xml).toEqual(expected.trim());
   });
 
-  it('prefixes sitemap index locations with a hostname', () => {
+  it("prefixes sitemap index locations with a hostname", () => {
     // When
     const xml = generateSitemapXml({
-      hostname: 'http://localhost:8080',
-      sitemapIndex: [{ loc: '/marketing-sitemap.xml' }],
+      hostname: "http://localhost:8080",
+      sitemapIndex: [{ loc: "/marketing-sitemap.xml" }],
       pretty: true,
     });
 

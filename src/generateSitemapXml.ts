@@ -1,5 +1,3 @@
-import { toXML, XmlElement } from 'jstoxml';
-
 export type SitemapXmlOptions = {
   hostname?: string;
   urlSet?: Array<{
@@ -16,14 +14,20 @@ export type SitemapXmlOptions = {
 };
 
 export enum Changefreq {
-  always = 'always',
-  hourly = 'hourly',
-  daily = 'daily',
-  weekly = 'weekly',
-  monthly = 'monthly',
-  yearly = 'yearly',
-  never = 'never',
+  always = "always",
+  hourly = "hourly",
+  daily = "daily",
+  weekly = "weekly",
+  monthly = "monthly",
+  yearly = "yearly",
+  never = "never",
 }
+
+type XmlNode = {
+  tag: string;
+  attrs?: Record<string, string>;
+  children?: XmlNode[] | string | number;
+};
 
 /**
  * For more information, see:
@@ -34,50 +38,67 @@ export function generateSitemapXml(options: SitemapXmlOptions): string {
     throw new Error(`Either a 'urlset' or a 'sitemapindex' can be generated, but not both`);
   }
 
-  let root: XmlElement = {};
+  const header = '<?xml version="1.0" encoding="UTF-8"?>';
+  const hostname = options.hostname || "";
+  const pretty = Boolean(options.pretty);
+
+  let root: XmlNode | null = null;
 
   if (options.urlSet) {
     root = {
-      _name: 'urlset',
-      _attrs: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' },
-      _content: [],
+      tag: "urlset",
+      attrs: { xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9" },
+      children: options.urlSet.map(({ loc, lastmod, changefreq, priority }) => {
+        const children: XmlNode[] = [{ tag: "loc", children: `${hostname}${loc}` }];
+        if (lastmod) children.push({ tag: "lastmod", children: lastmod });
+        if (changefreq) children.push({ tag: "changefreq", children: changefreq });
+        if (typeof priority === "number") children.push({ tag: "priority", children: priority });
+        return { tag: "url", children };
+      }),
     };
-    options.urlSet.forEach(({ loc, lastmod, changefreq, priority }) => {
-      const url: XmlElement = {
-        _name: 'url',
-        _content: [],
-      };
-      const urlContent = url._content as XmlElement[];
-      urlContent.push({ loc: `${options.hostname || ''}${loc}` });
-      if (lastmod) urlContent.push({ lastmod });
-      if (changefreq) urlContent.push({ changefreq });
-      if (typeof priority === 'number') urlContent.push({ priority });
-      // Add to root
-      (root._content as XmlElement[]).push(url);
-    });
   }
 
   if (options.sitemapIndex) {
     root = {
-      _name: 'sitemapindex',
-      _attrs: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' },
-      _content: [],
+      tag: "sitemapindex",
+      attrs: { xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9" },
+      children: options.sitemapIndex.map(({ loc, lastmod }) => {
+        const children: XmlNode[] = [{ tag: "loc", children: `${hostname}${loc}` }];
+        if (lastmod) children.push({ tag: "lastmod", children: lastmod });
+        return { tag: "sitemap", children };
+      }),
     };
-    options.sitemapIndex.forEach(({ loc, lastmod }) => {
-      const sitemap: XmlElement = {
-        _name: 'sitemap',
-        _content: [],
-      };
-      const sitemapContent = sitemap._content as XmlElement[];
-      sitemapContent.push({ loc: `${options.hostname || ''}${loc}` });
-      if (lastmod) sitemapContent.push({ lastmod });
-      // Add to root
-      (root._content as XmlElement[]).push(sitemap);
-    });
   }
 
-  return toXML(root, {
-    indent: options.pretty ? '  ' : undefined,
-    header: '<?xml version="1.0" encoding="UTF-8"?>',
-  });
+  if (!root) return header;
+  return `${header}${pretty ? "\n" : ""}${renderNode(root, pretty, 0)}`;
+}
+
+function renderNode(node: XmlNode, pretty: boolean, depth: number): string {
+  const indent = pretty ? "  ".repeat(depth) : "";
+  const nl = pretty ? "\n" : "";
+  const attrs = node.attrs
+    ? Object.entries(node.attrs)
+        .map(([k, v]) => ` ${k}="${escapeAttr(v)}"`)
+        .join("")
+    : "";
+
+  if (node.children === undefined) {
+    return `${indent}<${node.tag}${attrs}/>`;
+  }
+
+  if (typeof node.children === "string" || typeof node.children === "number") {
+    return `${indent}<${node.tag}${attrs}>${escapeText(String(node.children))}</${node.tag}>`;
+  }
+
+  const inner = node.children.map((c) => renderNode(c, pretty, depth + 1)).join(nl);
+  return `${indent}<${node.tag}${attrs}>${nl}${inner}${nl}${indent}</${node.tag}>`;
+}
+
+function escapeText(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function escapeAttr(value: string): string {
+  return escapeText(value).replace(/"/g, "&quot;");
 }

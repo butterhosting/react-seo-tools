@@ -10,12 +10,6 @@ It works especially well with the [**Next.js**](https://nextjs.org/) framework.
 
 # Installation
 
-**Yarn**
-
-```
-yarn add react-seo-tools
-```
-
 **NPM**
 
 ```
